@@ -2,7 +2,7 @@
     - cd server
     - npm ci
     - npm start
-*Запуск фронта:
+* Запуск фронта:
     - cd client
     - npm ci
     npm run dev
