@@ -9,9 +9,10 @@ import { UpdateTaskForm } from '../components/UpdateTaskForm/UpdateTaskForm';
 import { TaskInfo } from '../components/TaskInfo/TaskInfo';
 import { TaskItem } from '../components/TaskItem/TaskItem';
 import { Header } from '../components/Header/Header';
+import { Chart } from '../components/Chart/Chart';
 
 function App() {
-
+  const [page, setPage] = useState<'activity' | 'tasks'>('tasks');
   const [tasks, setTasks] = useState<ITask[]>([]);
   const [createPopupIsOpen, setCreatePopupIsOpen] = useState(false);
   const [updatePopup, setUpdatePopup] = useState<ITask | null>(null);
@@ -37,15 +38,21 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <Header openCreatePopup={() => setCreatePopupIsOpen(true)}/>
+      <Header setPage={setPage} currentPage={page} openCreatePopup={() => setCreatePopupIsOpen(true)}/>
       {createPopupIsOpen && <Popup title='Создать задачу' close={() => setCreatePopupIsOpen(false)}> 
-        <CreateTaskForm create={create}/>
+            <CreateTaskForm create={create}/>
       </Popup>}
       {updatePopup && <Popup title='Редактировать задачу' close={() => setUpdatePopup(null)}>
         <UpdateTaskForm update={update} task={updatePopup} />
       </Popup>}
-      {taskInfoOpen && <Popup title='Информация о задаче' close={() => setTaskInfoOpen(null)}> <TaskInfo task={taskInfoOpen} /></Popup>}
-      {tasks.map(task => <TaskItem openInfo={(task) => setTaskInfoOpen(task)} remove={remove} openPopupEdit={(task) => setUpdatePopup(task)} key={task.id} task={task} />)}
+      {page === 'activity' && <Chart tasks={tasks} />}
+      {page === 'tasks' && 
+        <>
+        
+          {taskInfoOpen && <Popup title='Информация о задаче' close={() => setTaskInfoOpen(null)}> <TaskInfo task={taskInfoOpen} /></Popup>}
+          {tasks.map(task => <TaskItem openInfo={(task) => setTaskInfoOpen(task)} remove={remove} openPopupEdit={(task) => setUpdatePopup(task)} key={task.id} task={task} />)}
+      </>
+    }
     </div>
   )
 }

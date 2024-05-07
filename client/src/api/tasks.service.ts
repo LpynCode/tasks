@@ -20,9 +20,15 @@ const remove = async (id: number) => {
     return data;
 }
 
+const getActivity = async () => {
+    const {data} = await $api.get('/activity');
+    return data;
+}
+
 export const tasksService = {
     getAll,
     create,
     update,
-    remove
+    remove,
+    getActivity
 }

@@ -28,6 +28,19 @@ class TasksRepository {
         const { rows } = await this.pool.query(query, [id]);
         return rows[0];
     }
+
+    // функция, которая выдает масив обьектов {count, date} для графика
+    async getActivity() {
+
+        const query = `
+        SELECT date_trunc('day', created_at) as date, count(*) as count
+        FROM tasks
+        GROUP BY date
+        ORDER BY date ASC
+        `;
+        const { rows } = await this.pool.query(query);
+        return rows;
+    }
 }
 
 module.exports = TasksRepository

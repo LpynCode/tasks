@@ -34,4 +34,9 @@ app.delete('/:id', async (req, res) => {
     res.send(task);
 });
 
+app.get('/activity', async (req, res) => {
+    const activity = await tasksRepository.getActivity();
+    res.send(activity);
+});
+
 app.listen(PORT, () => console.log(`SERVER STARTED ON PORT ${PORT}`));

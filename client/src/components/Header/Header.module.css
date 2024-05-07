@@ -8,3 +8,25 @@
     font-size: 24px;
     font-weight: 700;
 }
+
+.buttons {
+    display: flex;
+    gap: 16px;
+
+}
+
+.buttons span {
+    cursor: pointer;
+
+    transition: color 0.3s;
+
+    &:hover {
+        color: var(--link-color);
+    }
+}
+
+.active {
+    color: var(--link-color);
+
+    border-bottom: 1px solid var(--link-color);
+}
