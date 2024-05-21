@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import styles from './App.module.css'
 import { ITask } from '../types/task.interface'
 import { tasksService } from '../api/tasks.service';
@@ -18,6 +18,8 @@ function App() {
   const [updatePopup, setUpdatePopup] = useState<ITask | null>(null);
   const [taskInfoOpen, setTaskInfoOpen] = useState<ITask | null>(null);
 
+  const [sortType, setSortType] = useState<'asc' | 'desc'>('asc');
+
   useEffect(() => {
       tasksService.getAll().then(setTasks)
   }, []);
@@ -36,9 +38,19 @@ function App() {
     tasksService.remove(id).then(() => setTasks(tasks.filter(t => t.id !== id)));
   }
 
+  const sortedTasks = useMemo(() => {
+    return [...tasks].sort((a, b) => {
+      if (sortType === 'asc') {
+        return new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+      } else {
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      }
+    })
+  }, [tasks, sortType]);
+
   return (
     <div className={styles.app}>
-      <Header setPage={setPage} currentPage={page} openCreatePopup={() => setCreatePopupIsOpen(true)}/>
+      <Header sortType={sortType} setSortType={setSortType} setPage={setPage} currentPage={page} openCreatePopup={() => setCreatePopupIsOpen(true)}/>
       {createPopupIsOpen && <Popup title='Создать задачу' close={() => setCreatePopupIsOpen(false)}> 
             <CreateTaskForm create={create}/>
       </Popup>}
@@ -50,7 +62,7 @@ function App() {
         <>
         
           {taskInfoOpen && <Popup title='Информация о задаче' close={() => setTaskInfoOpen(null)}> <TaskInfo task={taskInfoOpen} /></Popup>}
-          {tasks.map(task => <TaskItem openInfo={(task) => setTaskInfoOpen(task)} remove={remove} openPopupEdit={(task) => setUpdatePopup(task)} key={task.id} task={task} />)}
+          {sortedTasks.map(task => <TaskItem openInfo={(task) => setTaskInfoOpen(task)} remove={remove} openPopupEdit={(task) => setUpdatePopup(task)} key={task.id} task={task} />)}
       </>
     }
     </div>
